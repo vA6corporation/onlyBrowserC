@@ -19,6 +19,36 @@ WebKitWebView *webView;
 
 
 
+static gboolean
+decide_policy_cb (WebKitWebView *webView,
+                  WebKitPolicyDecision *decision,
+                  WebKitPolicyDecisionType type)
+{
+    switch (type) {
+    case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
+        //WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
+        /* Make a policy decision here. */
+        g_print("Abriendo link\n");
+        break;
+    case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION:
+        //WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
+        /* Make a policy decision here. */
+        g_print("Abriendo ventana\n");
+        break;
+    case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
+        //WebKitResponsePolicyDecision *response = WEBKIT_RESPONSE_POLICY_DECISION (decision);
+        /* Make a policy decision here. */
+        g_print("No estamos seguros\n");
+        break;
+    default:
+        /* Making no decision results in webkit_policy_decision_use(). */
+        return FALSE;
+    }
+    return TRUE;
+}
+
+
+
 gint delete_event( GtkWidget *widget,
                    GdkEvent  *event,
                    gpointer   data )
@@ -123,6 +153,7 @@ int main (int argc, char *argv[])
     gtk_container_add (GTK_CONTAINER (exit_window), GTK_WIDGET (box2));
     //gtk_window_set_position (GTK_WINDOW(exit_window),GTK_WIN_POS_CENTER_ALWAYS);
     gtk_window_set_transient_for(GTK_WINDOW(exit_window),GTK_WINDOW(window));
+    g_signal_connect (webView, "decide-policy", G_CALLBACK (decide_policy_cb), NULL);
 
     go_home();
     //gtk_window_maximize (GTK_WINDOW(window));
